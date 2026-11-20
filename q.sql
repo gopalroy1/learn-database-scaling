@@ -1,0 +1,11 @@
+
+-- Module 1 test pg-load
+-- \set uid random(1, 100000)
+-- SELECT * FROM orders WHERE user_id = :uid;
+-- BEGIN;
+-- UPDATE stock SET qty = qty - 1 WHERE id = 1;
+-- SELECT pg_sleep(0.02);
+-- COMMIT;
+-- INSERT INTO logs (msg)
+-- SELECT 'log ' || g
+-- FROM generate_series(1, 10000) AS g;
