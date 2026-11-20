@@ -13,6 +13,10 @@ app.use(express.json());
 
 // [write yourself] decide where a read goes
 function pickReadNode(req: Request): ReadNode {
+    return {
+        name: 'replica2',
+        pool: replica2
+    }
     // Task 4: always replica2
     // Task 5: read-your-writes
     // Task 6: monotonic reads
