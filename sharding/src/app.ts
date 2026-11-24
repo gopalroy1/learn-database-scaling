@@ -20,6 +20,48 @@ app.get('/users/:id', async (req, res) => {
     res.json({ ...rows[0], shard: s });
 });
 
-// Task 2 routes go here
+
+// Task 2 scatter and gather
+app.get('/users', async (req, res) => {
+    const name = req?.query?.name
+    console.log("Searching user for name ", { name })
+    const result = shards.map((pool) => {
+        return pool.query('SELECT * FROM users WHERE name = $1', [name])
+    })
+    // console.dir(result[0])
+    const promiseRes = await Promise.all(result)
+    const allData: any = []
+    promiseRes.map((data) => {
+        allData.push(...data?.rows)
+    })
+    return res.send({ rowCount: allData?.length, data: allData })
+
+})
+app.get('/stats/avg-score', async (req, res) => {
+    const result = shards.map((pool) => {
+        return pool.query('SELECT COUNT(*) AS rows, SUM(score) as total_sum, AVG(score) as avg FROM users')
+    })
+    // console.dir(result[0])
+    const promiseRes = await Promise.all(result)
+    let totalSum = 0;
+    let totalCount = 0;
+    const dataRes = {}
+    promiseRes.map((data, i) => {
+        console.dir(data?.rows)
+        const { rows, total_sum, avg } = data?.rows[0]
+        if (!avg) {
+            return
+        }
+        totalSum += Number(total_sum)
+        totalCount += Number(rows)
+        //@ts-ignore
+        dataRes[`shard${i}`] = {
+            rows, total_sum, avg
+        }
+    })
+    return res.send({ ...dataRes, totalSum, totalCount, avg: Number(totalSum) / Number(totalCount) })
+
+})
+//Task 3 adding shard and moving items
 
 app.listen(3000, () => console.log('listening on 3000'));
