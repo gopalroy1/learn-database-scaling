@@ -1,0 +1,29 @@
+services:
+  shard0:
+    image: postgres:16
+    environment: { POSTGRES_PASSWORD: pass }
+    command: postgres -c max_prepared_transactions=10
+    ports: ["5470:5432"]
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    configs:
+      - source: seed0
+        target: /docker-entrypoint-initdb.d/02-seed.sql
+  shard1:
+    image: postgres:16
+    environment: { POSTGRES_PASSWORD: pass }
+    command: postgres -c max_prepared_transactions=10
+    ports: ["5471:5432"]
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    configs:
+      - source: seed1
+        target: /docker-entrypoint-initdb.d/02-seed.sql
+
+configs:
+  seed0:
+    content: |
+      INSERT INTO accounts (id, balance) VALUES ('alice', 1000);
+  seed1:
+    content: |
+      INSERT INTO accounts (id, balance, frozen) VALUES ('bob', 1000, false), ('carol', 500, true);

@@ -1,0 +1,27 @@
+{
+  "name": "consistency",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  "total": "tsx src/total.ts",
+  "naive": "tsx src/naive.ts",
+  "tpc": "tsx src/transfer2pc.ts",
+  "saga": "tsx src/saga.ts",
+  "typecheck": "tsc --noEmit"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.3.0",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.11",
+    "@types/pg": "^8.23.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
