@@ -1,4 +1,3 @@
-import { TOTAL_BUCKET } from "./const";
 
 // [write yourself] which shard holds this user?
 //For sharding
@@ -24,21 +23,46 @@ export const SHARD_CONFIG_NEW = {
     2: [12, 13, 14, 15],
     3: [4, 5, 10, 11]
 }
+// export function shardFor(userId: number): number {
+//     // throw new Error('not implemented');
+//     const bucketForUser = userId % TOTAL_BUCKET
+//     let ansShard = -1;
+//     for (let key in SHARD_CONFIG_NEW) {
+//         //@ts-ignore
+//         const arr = SHARD_CONFIG_NEW[key]
+//         if (arr.includes(bucketForUser)) {
+//             ansShard = Number(key)
+//             break;
+//         }
+//     }
+//     if (ansShard < 0 || isNaN(ansShard)) {
+//         throw new Error("Wrong shard for function")
+
+//     }
+//     return ansShard
+// }
+//Ring setup for shard
+const ring = [
+    { shard: 0, pos: 0 },
+    { shard: 1, pos: 33 },
+    { shard: 3, pos: 50 },
+    { shard: 2, pos: 66 }
+]
 export function shardFor(userId: number): number {
     // throw new Error('not implemented');
-    const bucketForUser = userId % TOTAL_BUCKET
+    const bucketForUser = userId % 101
     let ansShard = -1;
-    for (let key in SHARD_CONFIG_NEW) {
-        //@ts-ignore
-        const arr = SHARD_CONFIG_NEW[key]
-        if (arr.includes(bucketForUser)) {
-            ansShard = Number(key)
+    for (let i = 0; i < ring.length; i++) {
+        if (i == ring.length - 1 || (bucketForUser >= ring[i].pos && bucketForUser < ring[i + 1].pos)) {
+            ansShard = ring[i].shard
             break;
         }
+
     }
     if (ansShard < 0 || isNaN(ansShard)) {
         throw new Error("Wrong shard for function")
 
     }
+    console.log("For user id", userId, " shard is", ansShard)
     return ansShard
 }
