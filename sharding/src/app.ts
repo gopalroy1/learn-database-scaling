@@ -62,6 +62,6 @@ app.get('/stats/avg-score', async (req, res) => {
     return res.send({ ...dataRes, totalSum, totalCount, avg: Number(totalSum) / Number(totalCount) })
 
 })
-//Task 3 adding shard and moving items
+
 
 app.listen(3000, () => console.log('listening on 3000'));

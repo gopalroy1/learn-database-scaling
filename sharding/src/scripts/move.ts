@@ -1,5 +1,6 @@
 import { TOTAL_SHARD } from "../const"
 import { shards } from "../db"
+import { shardFor } from "../router"
 
 export const move = async () => {
     console.log("User migration from one shard to another is started")
@@ -30,4 +31,28 @@ export const move = async () => {
     console.log("User migration from one shard to another is completed")
 
 }
-move()
+
+export const moveForBucketSharding = () => {
+    shards.forEach(async (pool, shardIndex) => {
+        const data = await pool.query('SELECT id,name,score FROM users')
+        console.log("The total data found in the shard ", shardIndex, " is ", data?.rowCount)
+        data?.rows?.forEach(async (row) => {
+            const newShard = shardFor(row?.id)
+            if (newShard !== shardIndex) {
+                //move
+                try {
+                    console.log("Moving user from old shard", shardIndex, " to new shard", newShard)
+                    const userAdded = await shards[newShard]?.query('INSERT INTO users (id,name,score) values ($1,$2,$3) on conflict(id) do nothing returning * ;', [row?.id, row?.name, row?.score])
+                    console.log("User ", userAdded?.rows, " is added in shard ", row)
+
+                } catch (error) {
+                    console.error("Error while adding user")
+                    throw error
+                }
+                const deletedUser = await pool.query('DELETE FROM users WHERE id=$1 RETURNING id', [row?.id])
+                console.log("User ", deletedUser?.rows, " is deleted")
+            }
+        })
+    })
+}
+moveForBucketSharding()
