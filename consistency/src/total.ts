@@ -1,6 +1,7 @@
-import { closeAll, shards } from './db';
+import { closeAll, shards } from "./db";
 
 async function main(): Promise<void> {
+    //Get initial total
     let total = 0;
     for (let i = 0; i < shards.length; i++) {
         const { rows } = await shards[i].query('SELECT id, balance FROM accounts ORDER BY id');
@@ -11,4 +12,6 @@ async function main(): Promise<void> {
     }
     console.log(`TOTAL: ${total}`);
 }
+
+
 main().finally(closeAll);

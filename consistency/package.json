@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "total": "tsx src/total.ts",
-  "naive": "tsx src/naive.ts",
-  "tpc": "tsx src/transfer2pc.ts",
-  "saga": "tsx src/saga.ts",
-  "typecheck": "tsc --noEmit"
-},
+    "dev": "tsx src/index.ts",
+    "naive": "tsx src/naive.ts",
+    "tpc": "tsx watch src/tpc.ts",
+    "total": "tsx watch src/total.ts",
+    "saga": "tsx src/saga.ts",
+    "typecheck": "tsc --noEmit"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
